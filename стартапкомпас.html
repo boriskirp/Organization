@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Стартап-Компас: Концепт</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        h1 {
+            color: #4CAF50;
+            text-align: center;
+        }
+        .story-text {
+            font-size: 1.1em;
+            text-align: justify;
+        }
+        .concept-term {
+            font-weight: bold;
+            color: #4CAF50;
+            cursor: pointer;
+            text-decoration: none;
+            border-bottom: 2px solid #4CAF50;
+            position: relative;
+            white-space: nowrap;
+        }
+        .concept-term:hover {
+            color: #388E3C;
+            border-bottom-color: #388E3C;
+        }
+        .concept-term .star-icon {
+            display: none;
+            color: gold;
+            font-size: 1.2em;
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .concept-term:hover .star-icon {
+            display: block;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 500px;
+            background: #fff;
+            border: 2px solid #ddd;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 1000;
+            border-radius: 8px;
+        }
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .popup-close {
+            cursor: pointer;
+            font-size: 24px;
+            line-height: 1;
+        }
+        .backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Концепти Стартапу</h1>
+    <p class="story-text">
+        Будь-яка подорож стартапу починається з <span class="concept-term" data-concept="idea" data-audio-src="audio/idea.mp3">Ідеї<span class="star-icon">&#9733;</span></span>.
+        Згодом ви збираєте <span class="concept-term" data-concept="ecosystem" data-audio-src="audio/ecosystem.mp3">Екосистему<span class="star-icon">&#9733;</span></span>. Це допомагає не тільки розробити продукт, але й зрозуміти <span class="concept-term" data-concept="market" data-audio-src="audio/market.mp3">Ринок-поле<span class="star-icon">&#9733;</span></span>. Коли ви готові до розробки, пам'ятайте про <span class="concept-term" data-concept="mvp" data-audio-src="audio/mvp.mp3">MVP-скелет<span class="star-icon">&#9733;</span></span>, який містить лише ключові функції продукту. Щоб привернути увагу, вам знадобляться <span class="concept-term" data-concept="creatives" data-audio-src="audio/creatives.mp3">Креативи<span class="star-icon">&#9733;</span></span>, що створюють візуальний образ, і <span class="concept-term" data-concept="site" data-audio-src="audio/site.mp3">Сайт-вітрина<span class="star-icon">&#9733;</span></span> для демонстрації вашого продукту. Потім ви будуєте <span class="concept-term" data-concept="funnel" data-audio-src="audio/funnel.mp3">Воронку-історію<span class="star-icon">&#9733;</span></span>, яка описує шлях клієнта. Не забудьте про <span class="concept-term" data-concept="legal" data-audio-src="audio/legal.mp3">Юридичний захист<span class="star-icon">&#9733;</span></span> як "щит" для вашого бізнесу. І, звісно, <span class="concept-term" data-concept="finance" data-audio-src="audio/finance.mp3">Фінанси-дихання<span class="star-icon">&#9733;</span></span>, що дозволяють підтримувати баланс. Фінальна мета — створити <span class="concept-term" data-concept="pitch" data-audio-src="audio/pitch.mp3">Пітч-дек-фінал<span class="star-icon">&#9733;</span></span>, який збирає все в єдину презентацію.
+    </p>
+
+</div>
+
+<div class="popup" id="popup-idea">
+    <div class="popup-header">
+        <h2>Ідея</h2>
+        <span class="popup-close">&times;</span>
+    </div>
+    <div class="popup-content">
+        <p>Ідея - це розробка для закриття болей користувача.</p>
+        <p><strong>Функції:</strong> аналітика, пошук схожих болей.</p>
+    </div>
+</div>
+
+<div class="popup" id="popup-ecosystem">
+    <div class="popup-header">
+        <h2>Екосистема</h2>
+        <span class="popup-close">&times;</span>
+    </div>
+    <div class="popup-content">
+        <p>Команда: один чи кілька.</p>
+        <p><strong>Вимоги:</strong> технічні, візіонерські, маркетингові навички.</p>
+    </div>
+</div>
+
+<div class="popup" id="popup-market">
+    <div class="popup-header">
+        <h2>Ринок-поле</h2>
+        <span class="popup-close">&times;</span>
+    </div>
+    <div class="popup-content">
+        <p>Суть: аналіз цін та конкурентів.</p>
+    </div>
+</div>
+
+<div class="popup" id="popup-mvp">
+    <div class="popup-header">
+        <h2>MVP-скелет</h2>
+        <span class="popup-close">&times;</span>
+    </div>
+    <div class="popup-content">
+        <p>Суть: функції продукту, його користь та переваги.</p>
+    </div>
+</div>
+
+<div class="popup" id="popup-creatives">
+    <div class="popup-header">
+        <h2>Креативи</h2>
+        <span class="popup-close">&times;</span>
+    </div>
+    <div class="popup-content">
+        <p>Суть: візуальний образ і повідомлення для залучення уваги.</p>
+    </div>
+</div>
+
+<div class="popup" id="popup-site">
+    <div class="popup-header">
+        <h2>Сайт-вітрина</h2>
+        <span class="popup-close">&times;</span>
+    </div>
+    <div class="popup-content">
+        <p>Суть: сайт для демонстрації MVP, перший контакт клієнта з продуктом.</p>
+    </div>
+</div>
+
+<div class="popup" id="popup-funnel">
+    <div class="popup-header">
+        <h2>Воронка-історія</h2>
+        <span class="popup-close">&times;</span>
+    </div>
+    <div class="popup-content">
+        <p>Суть: просування = шлях клієнта, розказаний як історія.</p>
+    </div>
+</div>
+
+<div class="popup" id="popup-legal">
+    <div class="popup-header">
+        <h2>Юридичний захист</h2>
+        <span class="popup-close">&times;</span>
+    </div>
+    <div class="popup-content">
+        <p>Суть: захист інтелектуальної власності та бізнесу.</p>
+    </div>
+</div>
+
+<div class="popup" id="popup-finance">
+    <div class="popup-header">
+        <h2>Фінанси-дихання</h2>
+        <span class="popup-close">&times;</span>
+    </div>
+    <div class="popup-content">
+        <p>Суть: баланс.</p>
+    </div>
+</div>
+
+<div class="popup" id="popup-pitch">
+    <div class="popup-header">
+        <h2>Пітч-дек-фінал</h2>
+        <span class="popup-close">&times;</span>
+    </div>
+    <div class="popup-content">
+        <p>Суть: фінальний результат, що збирає всі дані в єдину презентацію.</p>
+    </div>
+</div>
+
+
+<div class="backdrop" id="backdrop"></div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const terms = document.querySelectorAll('.concept-term');
+        const backdrop = document.getElementById('backdrop');
+
+        terms.forEach(term => {
+            term.addEventListener('click', (event) => {
+                event.stopPropagation();
+                
+                const conceptId = term.dataset.concept;
+                const popup = document.getElementById(`popup-${conceptId}`);
+                
+                // Play sound
+                const audioPath = term.dataset.audioSrc;
+                if (audioPath) {
+                    const audio = new Audio(audioPath);
+                    audio.play().catch(e => console.error("Audio playback failed:", e));
+                }
+
+                document.querySelectorAll('.popup').forEach(p => p.style.display = 'none');
+                popup.style.display = 'block';
+                backdrop.style.display = 'block';
+            });
+        });
+
+        const closeButtons = document.querySelectorAll('.popup-close');
+        closeButtons.forEach(button => {
+            button.addEventListener('click', (event) => {
+                const popup = event.target.closest('.popup');
+                popup.style.display = 'none';
+                backdrop.style.display = 'none';
+            });
+        });
+
+        backdrop.addEventListener('click', () => {
+            document.querySelectorAll('.popup').forEach(p => p.style.display = 'none');
+            backdrop.style.display = 'none';
+        });
+    });
+</script>
+
+</body>
+</html>

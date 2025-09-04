@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Підприємство як організаційна структура</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 25px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #3f51b5;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        p {
+            margin-bottom: 1em;
+            text-align: justify;
+        }
+        strong.orchestrator-term {
+            color: #0645ad;
+            cursor: pointer;
+            border-bottom: 1px dashed #0645ad;
+            transition: color 0.3s ease, border-color 0.3s ease;
+        }
+        strong.orchestrator-term:hover {
+            color: #2c3e50;
+            border-color: #2c3e50;
+        }
+        /* Стилі для спливаючого вікна "Orchestrator" */
+        #orchestrator-popup {
+            position: absolute;
+            z-index: 1000;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 20px;
+            max-width: 350px;
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(0.95);
+            transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+        }
+        #orchestrator-popup.show {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+        #popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+        #popup-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #3f51b5;
+        }
+        #popup-close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            color: #aaa;
+            cursor: pointer;
+            line-height: 1;
+        }
+        #popup-content {
+            font-size: 0.9em;
+        }
+        #popup-content ul {
+            padding-left: 20px;
+            margin-top: 10px;
+        }
+        #popup-content li {
+            margin-bottom: 5px;
+        }
+
+        .star {
+            color: gold;
+            margin-left: 5px;
+            vertical-align: super;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Підприємство як організаційна структура</h1>
+        <p>
+            1. Стратегія - це визначення сенсу існування підприємства: <strong class="orchestrator-term" data-term="виробництво">виробництво</strong>, <strong class="orchestrator-term" data-term="продаж">продаж</strong>, <strong class="orchestrator-term" data-term="перепродаж">перепродаж</strong>.
+        </p>
+        <p>
+            2. Структура - це організаційна схема підприємства, яка визначає: <strong class="orchestrator-term" data-term="посада">посаду</strong>, <strong class="orchestrator-term" data-term="обов'язки">обов'язки</strong> та <strong class="orchestrator-term" data-term="відповідальність">відповідальність</strong>.
+        </p>
+        <p>
+            3. Процеси - це налагоджені шляхи для досягнення цілей, які можуть бути <strong class="orchestrator-term" data-term="зовнішні">зовнішніми</strong> (взаємодія з ринком) або <strong class="orchestrator-term" data-term="внутрішні">внутрішніми</strong> (взаємодія всередині).
+        </p>
+        <p>
+            4. Комплексне застосування - це впровадження всіх елементів в єдину систему, що охоплює: <strong class="orchestrator-term" data-term="документообіг">документообіг</strong>, <strong class="orchestrator-term" data-term="безпека">безпеку</strong>, <strong class="orchestrator-term" data-term="інновації">інновації</strong>.
+        </p>
+
+        <hr style="border: 0; border-top: 1px dashed #ccc; margin: 30px 0;">
+
+        <h3>Завантаження аудіофайлу</h3>
+        <p>Завантажте аудіофайл, щоб він відтворювався при натисканні на виділені терміни.</p>
+        <div style="display: flex; align-items: center; gap: 15px; margin-top: 15px;">
+            <label for="audio-upload" style="cursor: pointer; padding: 10px 20px; background-color: #3f51b5; color: #fff; border-radius: 5px; font-weight: bold; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);">
+                Обрати файл
+            </label>
+            <input type="file" id="audio-upload" accept="audio/*" style="display: none;">
+            <span id="file-status" style="color: #666;">Файл не обрано</span>
+        </div>
+        <audio id="audio-player" style="display: none;"></audio>
+    </div>
+
+    <!-- Popup Window -->
+    <div id="orchestrator-popup">
+        <div id="popup-header">
+            <span id="popup-title"></span>
+            <button id="popup-close-btn">&times;</button>
+        </div>
+        <div id="popup-content">
+            <p id="popup-description"></p>
+            <ul id="popup-features"></ul>
+        </div>
+    </div>
+
+    <script>
+        const knowledgeBase = {
+            "виробництво": { title: "Виробництво", description: "Процецес створення товарів або послуг.", features: ["Оптимізація ресурсів", "Контроль якості", "Автоматизація"] },
+            "продаж": { title: "Продаж", description: "Процес реалізації товарів або послуг клієнтам.", features: ["Прямі продажі", "Онлайн-маркетинг", "Управління відносинами з клієнтами"] },
+            "перепродаж": { title: "Перепродаж", description: "Процес купівлі товарів для подальшого продажу без істотних змін.", features: ["Аналіз ринку", "Логістика", "Управління запасами"] },
+            "посада": { title: "Посада", description: "Офіційна позиція співробітника в ієрархії підприємства.", features: ["Назва посади", "Підпорядкування", "Кар'єрний шлях"] },
+            "обов'язки": { title: "Обов'язки", description: "Функції та завдання, які має виконувати співробітник на своїй посаді.", features: ["Опис роботи", "Ключові показники ефективності", "Звітування"] },
+            "відповідальність": { title: "Відповідальність", description: "Ступінь відповідальності співробітника за результати своєї діяльності.", features: ["Фінансова відповідальність", "Дотримання правил", "Прийняття рішень"] },
+            "зовнішні": { title: "Зовнішні процеси", description: "Процеси, що взаємодіють із зовнішнім середовищем (постачальники, клієнти).", features: ["Продажі", "Закупівлі", "Маркетинг"] },
+            "внутрішні": { title: "Внутрішні процеси", description: "Процеси, що відбуваються всередині підприємства (виробництво, облік).", features: ["Бухгалтерія", "HR", "Внутрішній документообіг"] },
+            "документообіг": { title: "Документообіг", description: "Управління створенням, використанням та зберіганням документів.", features: ["Електронний документообіг", "Архівування", "Конфіденційність"] },
+            "безпека": { title: "Безпека", description: "Захист підприємства від внутрішніх та зовнішніх загроз.", features: ["Кібербезпека", "Фізична безпека", "Безпека даних"] },
+            "інновації": { title: "Інновації", description: "Впровадження нових ідей, продуктів або процесів для покращення ефективності.", features: ["Дослідження та розробки", "Оптимізація процесів", "Нові технології"] }
+        };
+
+        const orchestratorPopup = document.getElementById('orchestrator-popup');
+        const popupTitle = document.getElementById('popup-title');
+        const popupDescription = document.getElementById('popup-description');
+        const popupFeatures = document.getElementById('popup-features');
+        const popupCloseBtn = document.getElementById('popup-close-btn');
+
+        // Елементи для аудіо
+        const audioFileInput = document.getElementById('audio-upload');
+        const audioPlayer = document.getElementById('audio-player');
+        const fileStatus = document.getElementById('file-status');
+        let currentAudioSrc = null;
+
+        // Функція для відображення спливаючого вікна
+        function showOrchestratorPopup(term, rect) {
+            const data = knowledgeBase[term];
+            if (!data) return;
+
+            popupTitle.textContent = data.title;
+            popupDescription.textContent = data.description;
+            popupFeatures.innerHTML = '';
+            data.features.forEach(feature => {
+                const li = document.createElement('li');
+                li.textContent = feature;
+                popupFeatures.appendChild(li);
+            });
+
+            orchestratorPopup.style.top = `${rect.bottom + window.scrollY + 10}px`;
+            orchestratorPopup.style.left = `${rect.left + window.scrollX}px`;
+            orchestratorPopup.classList.add('show');
+        }
+
+        // Функція для приховування спливаючого вікна
+        function hideOrchestratorPopup() {
+            orchestratorPopup.classList.remove('show');
+        }
+
+        // --- Обробники завантаження аудіо ---
+        audioFileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const fileURL = URL.createObjectURL(file);
+                audioPlayer.src = fileURL;
+                audioPlayer.load();
+                currentAudioSrc = fileURL;
+                fileStatus.textContent = `Файл завантажено: ${file.name}`;
+                alert('Аудіофайл завантажено. Тепер клікніть на виділений термін, щоб відтворити.');
+            }
+        });
+
+        // Функція для очищення зірочок
+        function clearStars() {
+            document.querySelectorAll('.star').forEach(star => star.remove());
+        }
+
+        // --- Обробники кліку на терміни ---
+        document.querySelectorAll('.orchestrator-term').forEach(termElement => {
+            termElement.addEventListener('click', (event) => {
+                event.stopPropagation();
+                
+                clearStars();
+                const starElement = document.createElement('span');
+                starElement.classList.add('star');
+                starElement.textContent = '⭐';
+                event.target.appendChild(starElement);
+
+                if (currentAudioSrc) {
+                    audioPlayer.currentTime = 0;
+                    audioPlayer.play();
+                }
+
+                const selectedTerm = event.target.dataset.term;
+                const rect = event.target.getBoundingClientRect();
+
+                if (knowledgeBase[selectedTerm]) {
+                    showOrchestratorPopup(selectedTerm, rect);
+                } else {
+                    hideOrchestratorPopup();
+                }
+            });
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!orchestratorPopup.contains(event.target) && !event.target.classList.contains('orchestrator-term')) {
+                hideOrchestratorPopup();
+            }
+        });
+
+        popupCloseBtn.addEventListener('click', hideOrchestratorPopup);
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && orchestratorPopup.classList.contains('show')) {
+                hideOrchestratorPopup();
+            }
+        });
+    </script>
+</body>
+</html>

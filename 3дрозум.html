@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D-моделювання: Швидкий Огляд</title>
+    <style>
+        /* [СТИЛІ ЗАЛИШЕНІ БЕЗ ЗМІН] */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 25px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #3f51b5;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        p {
+            margin-bottom: 1em;
+            text-align: justify;
+        }
+
+        strong.orchestrator-term {
+            color: #0645ad;
+            cursor: pointer;
+            text-decoration: underline;
+            font-weight: bold;
+            transition: color 0.2s ease-in-out;
+        }
+
+        strong.orchestrator-term:hover {
+            color: #003380;
+            cursor: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><text x="0" y="16" font-size="16">⭐</text></svg>') 10 10, pointer;
+        }
+
+        .orchestrator-popup {
+            position: absolute;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            padding: 15px 20px;
+            max-width: 350px;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+            transform: translateY(10px);
+            box-sizing: border-box;
+        }
+
+        .orchestrator-popup.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .popup-header h3 {
+            margin: 0;
+            color: #3f51b5;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+            line-height: 1;
+            padding: 0;
+            transition: color 0.2s ease-in-out;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        .popup-content p {
+            margin: 0 0 10px 0;
+            font-size: 0.95em;
+            color: #555;
+            text-align: left;
+        }
+
+        .popup-content ul {
+            padding-left: 20px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            list-style-type: disc;
+            font-size: 0.9em;
+            color: #555;
+            text-align: left;
+        }
+
+        .popup-content ul li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Основи 3D-моделювання</h1>
+        <p>
+            Для роботи з 3D-графікою необхідно обрати відповідні <strong class="orchestrator-term" data-term="інструменти">інструменти</strong>, залежно від <strong class="orchestrator-term" data-term="мета">мети</strong> проєкту. Всі об'єкти створюються у віртуальному просторі, що називається <strong class="orchestrator-term" data-term="сцена">сцена</strong>. Реалістичності зображенню надають за допомогою <strong class="orchestrator-term" data-term="світло">світла</strong> та налаштування <strong class="orchestrator-term" data-term="матеріали">матеріалів</strong>. Якщо потрібно додати рух, використовується <strong class="orchestrator-term" data-term="анімація">анімація</strong>. Завершальним етапом, що перетворює 3D-сцену на фінальне зображення, є <strong class="orchestrator-term" data-term="рендер">рендер</strong>.
+        </p>
+    </div>
+
+    <div id="orchestratorPopup" class="orchestrator-popup">
+        <div class="popup-header">
+            <h3 id="popupTitle"></h3>
+            <button class="close-btn" id="popupCloseBtn">&times;</button>
+        </div>
+        <div class="popup-content">
+            <p id="popupDescription"></p>
+            <ul id="popupFeatures"></ul>
+        </div>
+    </div>
+    
+    <div style="margin-top: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 8px;">
+        <h3>Музичний Програвач</h3>
+        <p>1. Завантажити з URL:</p>
+        <input type="text" id="musicUrlInput" placeholder="Введіть URL аудіофайлу">
+        <button id="loadUrlBtn">Завантажити</button>
+        <hr style="margin: 10px 0;">
+        <p>2. Або завантажити з ПК:</p>
+        <input type="file" id="musicFileInput" accept="audio/*">
+        <hr style="margin: 10px 0;">
+        <audio id="bell-sound-player" controls style="width: 100%; margin-top: 10px;"></audio>
+    </div>
+    
+    <script>
+        const orchestratorPopup = document.getElementById('orchestratorPopup');
+        const popupTitle = document.getElementById('popupTitle');
+        const popupDescription = document.getElementById('popupDescription');
+        const popupFeatures = document.getElementById('popupFeatures');
+        const popupCloseBtn = document.getElementById('popupCloseBtn');
+
+        const knowledgeBase = {
+            "інструменти": {
+                title: "3D Інструменти",
+                description: "Програмне забезпечення, що використовується для створення, редагування та анімації 3D-об'єктів.",
+                features: [
+                    "Blender (безкоштовно)",
+                    "Autodesk 3ds Max (комерційний)",
+                    "Cinema 4D (комерційний)"
+                ]
+            },
+            "мета": {
+                title: "Мета проєкту",
+                description: "Призначення, для якого створюється 3D-модель або сцена.",
+                features: [
+                    "Візуалізація архітектури",
+                    "Ігрові активи",
+                    "Кіно та анімація",
+                    "3D-друк"
+                ]
+            },
+            "сцена": {
+                title: "Сцена",
+                description: "Віртуальний 3D-простір, у якому розміщуються об'єкти, світло та камери.",
+                features: [
+                    "Система координат",
+                    "Фон та оточення",
+                    "Камери"
+                ]
+            },
+            "світло": {
+                title: "Світло",
+                description: "Віртуальні джерела світла, які імітують освітлення реального світу, щоб надати об'єктам об'єму та тіней.",
+                features: [
+                    "Точкове світло",
+                    "Напрямлене світло",
+                    "Прожектор",
+                    "Environment Light"
+                ]
+            },
+            "матеріали": {
+                title: "Матеріали",
+                description: "Властивості, які визначають, як об'єкт виглядає: його колір, текстуру, блиск та прозорість.",
+                features: [
+                    "Текстури (зображення)",
+                    "PBR-матеріали",
+                    "Шейдери"
+                ]
+            },
+            "анімація": {
+                title: "Анімація",
+                description: "Процес створення руху 3D-об'єктів, камер або освітлення у сцені.",
+                features: [
+                    "Ключові кадри (keyframes)",
+                    "Ріггінг (rigging) персонажів",
+                    "Імітація фізики (фізичні симуляції)"
+                ]
+            },
+            "рендер": {
+                title: "Рендер",
+                description: "Фінальний процес обчислення та створення зображення або відео з 3D-сцени.",
+                features: [
+                    "Рендеринг в реальному часі",
+                    "Офлайн-рендеринг",
+                    "Рендер-ферми"
+                ]
+            }
+        };
+
+        function showOrchestratorPopup(term, rect) {
+            const data = knowledgeBase[term];
+            if (!data) return;
+
+            popupTitle.textContent = data.title;
+            popupDescription.textContent = data.description;
+            popupFeatures.innerHTML = '';
+            if (data.features && data.features.length > 0) {
+                popupFeatures.style.display = 'block';
+                data.features.forEach(feature => {
+                    const li = document.createElement('li');
+                    li.textContent = feature;
+                    popupFeatures.appendChild(li);
+                });
+            } else {
+                popupFeatures.style.display = 'none';
+            }
+
+            let popupLeft = rect.left + window.scrollX;
+            let popupTop = rect.bottom + window.scrollY + 10;
+
+            if (popupLeft + orchestratorPopup.offsetWidth > window.innerWidth - 20) {
+                popupLeft = window.innerWidth - orchestratorPopup.offsetWidth - 20;
+            }
+            if (popupLeft < 20) {
+                popupLeft = 20;
+            }
+
+            orchestratorPopup.style.left = `${popupLeft}px`;
+            orchestratorPopup.style.top = `${popupTop}px`;
+            orchestratorPopup.classList.add('show');
+            orchestratorPopup.style.display = 'block';
+        }
+
+        function hideOrchestratorPopup() {
+            orchestratorPopup.classList.remove('show');
+            setTimeout(() => {
+                orchestratorPopup.style.display = 'none';
+            }, 200);
+        }
+
+        // --- Музичний Програвач ---
+        const audioPlayer = document.getElementById('bell-sound-player');
+        const musicUrlInput = document.getElementById('musicUrlInput');
+        const loadUrlBtn = document.getElementById('loadUrlBtn');
+        const musicFileInput = document.getElementById('musicFileInput');
+
+        let currentAudioSrc = null;
+
+        loadUrlBtn.addEventListener('click', () => {
+            const url = musicUrlInput.value.trim();
+            if (url) {
+                currentAudioSrc = url;
+                audioPlayer.src = currentAudioSrc;
+                audioPlayer.load();
+                alert('Аудіофайл завантажено. Тепер клікніть на виділений термін, щоб відтворити.');
+            } else {
+                alert('Будь ласка, введіть URL музичного файлу.');
+            }
+        });
+
+        musicFileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                currentAudioSrc = URL.createObjectURL(file);
+                audioPlayer.src = currentAudioSrc;
+                audioPlayer.load();
+                alert('Аудіофайл завантажено. Тепер клікніть на виділений термін, щоб відтворити.');
+            }
+        });
+
+        // --- Обробники кліку на терміни ---
+        document.querySelectorAll('.orchestrator-term').forEach(termElement => {
+            termElement.addEventListener('click', (event) => {
+                event.stopPropagation();
+                
+                if (currentAudioSrc) {
+                    audioPlayer.currentTime = 0;
+                    audioPlayer.play();
+                }
+
+                const selectedText = event.target.dataset.term;
+                const rect = event.target.getBoundingClientRect();
+
+                if (knowledgeBase[selectedText]) {
+                    showOrchestratorPopup(selectedText, rect);
+                } else {
+                    hideOrchestratorPopup();
+                }
+            });
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!orchestratorPopup.contains(event.target) && event.target.dataset.term === undefined) {
+                hideOrchestratorPopup();
+            }
+        });
+
+        popupCloseBtn.addEventListener('click', hideOrchestratorPopup);
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && orchestratorPopup.classList.contains('show')) {
+                hideOrchestratorPopup();
+            }
+        });
+    </script>
+</body>
+</html>

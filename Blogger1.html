@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blogger: Швидкий Огляд</title>
+    <style>
+        /* Базові стилі для сторінки та тексту */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 25px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #3f51b5; /* Матеріал-дизайн синій */
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        p {
+            margin-bottom: 1em;
+            text-align: justify;
+        }
+
+        strong.orchestrator-term {
+            color: #0645ad; /* Синій, як посилання */
+            cursor: pointer;
+            text-decoration: underline;
+            font-weight: bold;
+            transition: color 0.2s ease-in-out;
+        }
+
+        strong.orchestrator-term:hover {
+            color: #003380; /* Темніший синій при наведенні */
+        }
+
+        /* Стилі для спливаючого вікна (попапу) */
+        .orchestrator-popup {
+            position: absolute;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            padding: 15px 20px;
+            max-width: 350px;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+            transform: translateY(10px); /* Невелика анімація появи */
+            box-sizing: border-box; /* Важливо для padding */
+        }
+
+        .orchestrator-popup.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .popup-header h3 {
+            margin: 0;
+            color: #3f51b5;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+            line-height: 1;
+            padding: 0;
+            transition: color 0.2s ease-in-out;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        .popup-content p {
+            margin: 0 0 10px 0;
+            font-size: 0.95em;
+            color: #555;
+            text-align: left; /* Важливо, щоб текст в попапі був вирівняний по лівому краю */
+        }
+
+        .popup-content ul {
+            padding-left: 20px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            list-style-type: disc;
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        .popup-content ul li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Blogger: Ваш Інструмент для Онлайн Присутності</h1>
+        <p>
+            **Blogger** – це безкоштовна платформа від Google для легкого створення та ведення <strong class="orchestrator-term">блогу</strong> чи міні-сайту. Він ідеально підходить для тих, хто хоче ділитися контентом без глибоких технічних знань.
+        </p>
+        <p>
+            Використовуйте інтуїтивний <strong class="orchestrator-term">редактор</strong> для створення <strong class="orchestrator-term">дописів</strong>, додавання <strong class="orchestrator-term">картинок та відео</strong>. Організуйте контент за допомогою <strong class="orchestrator-term">сторінок</strong> та <strong class="orchestrator-term">меню</strong>, що спрощує навігацію.
+        </p>
+        <p>
+            Взаємодійте з читачами через <strong class="orchestrator-term">коментарі</strong> з гнучкими налаштуваннями модерації. Для розширення можливостей є <strong class="orchestrator-term">вбудування коду</strong>. Персоналізуйте вигляд блогу, обираючи <strong class="orchestrator-term">теми</strong> та налаштовуючи <strong class="orchestrator-term">сайдбар</strong>.
+        </p>
+    </div>
+
+    <div id="orchestratorPopup" class="orchestrator-popup">
+        <div class="popup-header">
+            <h3 id="popupTitle"></h3>
+            <button class="close-btn" id="popupCloseBtn">&times;</button>
+        </div>
+        <div class="popup-content">
+            <p id="popupDescription"></p>
+            <ul id="popupFeatures"></ul>
+        </div>
+    </div>
+
+    <script>
+        const orchestratorPopup = document.getElementById('orchestratorPopup');
+        const popupTitle = document.getElementById('popupTitle');
+        const popupDescription = document.getElementById('popupDescription');
+        const popupFeatures = document.getElementById('popupFeatures');
+        const popupCloseBtn = document.getElementById('popupCloseBtn');
+
+        // База знань для "Оркестратора"
+        const knowledgeBase = {
+            "блогу": {
+                title: "Суть Blogger",
+                description: "Онлайн-платформа для створення та ведення персональних або корпоративних блогів. Проста у використанні.",
+                features: [
+                    "Безкоштовно від Google",
+                    "Не потребує хостингу",
+                    "Підходить для новачків і не тільки!"
+                ]
+            },
+            "редактор": {
+                title: "Редактор Контенту",
+                description: "Інструмент для створення та форматування дописів.",
+                features: [
+                    "Візуальний (WYSIWYG) режим",
+                    "HTML-режим для просунутих",
+                    "Текстові можливості (шрифти, вирівнювання)"
+                ]
+            },
+            "дописів": {
+                title: "Блог-пост (Допис)",
+                description: "Основна одиниця контенту на Blogger — стаття, запис чи новина.",
+                features: [
+                    "Дата публікації",
+                    "Мітки (категорії)",
+                    "Можливість коментування"
+                ]
+            },
+            "картинок та відео": {
+                title: "Мультимедіа",
+                description: "Інтеграція зображень та відео для збагачення контенту.",
+                features: [
+                    "Завантаження зображень",
+                    "Вбудовування відео з YouTube",
+                    "Прості галереї"
+                ]
+            },
+            "сторінок": {
+                title: "Статичні Сторінки",
+                description: "Окремі сторінки з незмінним контентом (наприклад, 'Про нас', 'Контакти').",
+                features: [
+                    "Незалежні від постів",
+                    "Для основної інформації",
+                    "Можливість перелінковки"
+                ]
+            },
+            "меню": {
+                title: "Навігаційне Меню",
+                description: "Елементи для легкого переходу між сторінками та розділами блогу.",
+                features: [
+                    "Посилання на сторінки/мітки",
+                    "Налаштовується в макеті",
+                    "Зручність для користувача"
+                ]
+            },
+            "коментарі": {
+                title: "Система Коментарів",
+                description: "Взаємодія з аудиторією під кожним дописом.",
+                features: [
+                    "Повна модерація",
+                    "Сповіщення на пошту",
+                    "Вимкнення коментарів"
+                ]
+            },
+            "вбудування коду": {
+                title: "Вбудування Коду",
+                description: "Можливість додавати власний HTML, CSS, JavaScript для розширення функціоналу.",
+                features: [
+                    "HTML-режим редактора",
+                    "Віджети HTML/JavaScript",
+                    "Інтеграція сторонніх сервісів"
+                ]
+            },
+            "теми": {
+                title: "Теми (Шаблони)",
+                description: "Готові дизайни для швидкого оформлення блогу, з можливістю кастомізації.",
+                features: [
+                    "Широкий вибір",
+                    "Адаптивний дизайн",
+                    "Налаштування кольорів/шрифтів"
+                ]
+            },
+            "сайдбар": {
+                title: "Сайдбар (Бічна Панель)",
+                description: "Додаткова область для віджетів: архів, мітки, профіль автора, рекламні блоки.",
+                features: [
+                    "Додавання гаджетів",
+                    "Організація додаткової інформації",
+                    "Навігаційні елементи"
+                ]
+            }
+        };
+
+        function showOrchestratorPopup(term, rect) {
+            const data = knowledgeBase[term];
+            if (!data) return;
+
+            popupTitle.textContent = data.title;
+            popupDescription.textContent = data.description;
+
+            popupFeatures.innerHTML = ''; // Очистити попередні елементи
+            if (data.features && data.features.length > 0) {
+                popupFeatures.style.display = 'block'; // Показати список
+                data.features.forEach(feature => {
+                    const li = document.createElement('li');
+                    li.textContent = feature;
+                    popupFeatures.appendChild(li);
+                });
+            } else {
+                popupFeatures.style.display = 'none'; // Сховати список, якщо немає функцій
+            }
+            
+            // Позиціонування попапу відносно виділеного терміну
+            let popupLeft = rect.left + window.scrollX;
+            let popupTop = rect.bottom + window.scrollY + 10; // +10px для відступу
+
+            // Перевірка, чи не виходить попап за межі правої сторони екрану
+            if (popupLeft + orchestratorPopup.offsetWidth > window.innerWidth - 20) { // -20px відступ від краю
+                popupLeft = window.innerWidth - orchestratorPopup.offsetWidth - 20;
+            }
+            // Перевірка, чи не виходить попап за межі лівої сторони екрану
+            if (popupLeft < 20) {
+                popupLeft = 20;
+            }
+
+            orchestratorPopup.style.left = `${popupLeft}px`;
+            orchestratorPopup.style.top = `${popupTop}px`;
+            orchestratorPopup.classList.add('show');
+            orchestratorPopup.style.display = 'block'; // Ensure it's block before showing
+        }
+
+        function hideOrchestratorPopup() {
+            orchestratorPopup.classList.remove('show');
+            setTimeout(() => {
+                orchestratorPopup.style.display = 'none';
+            }, 200); // Час має відповідати transition в CSS
+        }
+
+        // Замінюємо 'mouseup' на 'click' для активації попапу
+        document.querySelectorAll('.orchestrator-term').forEach(termElement => {
+            termElement.addEventListener('click', (event) => {
+                event.stopPropagation(); // Зупиняємо розповсюдження кліку, щоб він не закрив попап одразу
+                const selectedText = event.target.textContent.toLowerCase().trim();
+                const rect = event.target.getBoundingClientRect();
+                if (knowledgeBase[selectedText]) {
+                    showOrchestratorPopup(selectedText, rect);
+                } else {
+                    hideOrchestratorPopup(); // Ховаємо, якщо клікнули на термін, якого немає в базі
+                }
+            });
+        });
+
+        // Закриваємо попап при кліку поза ним, але не на кнопці закриття
+        document.addEventListener('click', (event) => {
+            if (!orchestratorPopup.contains(event.target) && event.target !== popupCloseBtn) {
+                hideOrchestratorPopup();
+            }
+        });
+
+        popupCloseBtn.addEventListener('click', hideOrchestratorPopup);
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && orchestratorPopup.classList.contains('show')) {
+                hideOrchestratorPopup();
+            }
+        });
+    </script>
+</body>
+</html>
